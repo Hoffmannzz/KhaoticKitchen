@@ -27,8 +27,8 @@ namespace KitchenChaos.Networking
     public sealed class OnlineSession : MonoBehaviour
     {
         /// <summary>Bump it when the messages change, so different builds refuse to play together.</summary>
-        public const int ProtocolVersion = 1;
-        public const ushort DefaultPort = 7777;
+        public const int protocolVersion = 1;
+        public const ushort defaultPort = 7777;
 
         private const float connectTimeout = 20F;
         private const string playerNameKey = "KitchenChaos.PlayerName";
@@ -68,7 +68,7 @@ namespace KitchenChaos.Networking
         private OnlineMatchMenu matchMenu;
         private float connectDeadline;
 
-        private readonly List<OnlineSeat> members = new(GameSession.MaxPlayers);
+        private readonly List<OnlineSeat> members = new(GameSession.maxPlayers);
         private readonly HashSet<ulong> readyClients = new();
         private readonly Dictionary<ulong, string> pendingNames = new();
 
@@ -120,7 +120,7 @@ namespace KitchenChaos.Networking
 
             try
             {
-                var joinInfo = await transport.HostAsync(new HostOptions(useRelay, port, GameSession.MaxPlayers - 1, CreatePayload()));
+                var joinInfo = await transport.HostAsync(new HostOptions(useRelay, port, GameSession.maxPlayers - 1, CreatePayload()));
 
                 // Cancelled while connecting.
                 if (State != SessionState.Connecting)
@@ -176,7 +176,7 @@ namespace KitchenChaos.Networking
         {
             if (!IsHost || State != SessionState.Lobby) return;
 
-            var seats = members.Take(GameSession.MaxPlayers).ToList();
+            var seats = members.Take(GameSession.maxPlayers).ToList();
 
             var writer = new NetWriter(MessageType.StartMatch);
             writer.Write((byte)seats.Count);
@@ -237,7 +237,7 @@ namespace KitchenChaos.Networking
         private static byte[] CreatePayload()
         {
             var writer = new NetWriter();
-            writer.Write(ProtocolVersion);
+            writer.Write(protocolVersion);
             writer.Write(PlayerName);
             return writer.ToArray();
         }
@@ -350,9 +350,9 @@ namespace KitchenChaos.Networking
                 return false;
             }
 
-            if (version != ProtocolVersion) reason = "Your game version is different from the host version.";
+            if (version != protocolVersion) reason = "Your game version is different from the host version.";
             else if (State != SessionState.Lobby) reason = "A match is already being played. Try again when it is over.";
-            else if (members.Count + pendingNames.Count >= GameSession.MaxPlayers) reason = "The kitchen is full (4 players).";
+            else if (members.Count + pendingNames.Count >= GameSession.maxPlayers) reason = "The kitchen is full (4 players).";
             else
             {
                 reason = null;

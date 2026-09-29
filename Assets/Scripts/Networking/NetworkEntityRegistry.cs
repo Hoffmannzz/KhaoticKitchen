@@ -14,7 +14,7 @@ namespace KitchenChaos.Networking
     /// </summary>
     public static class NetworkEntityRegistry
     {
-        public const int None = -1;
+        public const int none = -1;
 
         private const int firstDynamicId = 100000;
 
@@ -104,14 +104,14 @@ namespace KitchenChaos.Networking
         }
 
         public static int GetId(object component) =>
-            component is Component c && c && ids.TryGetValue(c.gameObject, out int id) ? id : None;
+            component is Component c && c && ids.TryGetValue(c.gameObject, out int id) ? id : none;
 
         public static int GetId(GameObject gameObject) =>
-            gameObject && ids.TryGetValue(gameObject, out int id) ? id : None;
+            gameObject && ids.TryGetValue(gameObject, out int id) ? id : none;
 
         public static bool TryGet(int id, out GameObject gameObject)
         {
-            if (id != None && objects.TryGetValue(id, out gameObject) && gameObject) return true;
+            if (id != none && objects.TryGetValue(id, out gameObject) && gameObject) return true;
 
             gameObject = null;
             return false;
@@ -154,7 +154,7 @@ namespace KitchenChaos.Networking
             recordedIds = null;
             replayedIds = null;
             nextDynamicId = firstDynamicId;
-            nextLocalId = None - 1;
+            nextLocalId = none - 1;
         }
     }
 }

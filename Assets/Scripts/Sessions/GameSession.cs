@@ -32,7 +32,7 @@ namespace KitchenChaos.Sessions
     /// </summary>
     public static class GameSession
     {
-        public const int MaxPlayers = 4;
+        public const int maxPlayers = 4;
 
         public static GameMode Mode { get; private set; } = GameMode.SinglePlayer;
 
@@ -54,8 +54,8 @@ namespace KitchenChaos.Sessions
             _ => 1
         };
 
-        private static readonly List<LocalSeat> localSeats = new(MaxPlayers);
-        private static readonly List<OnlineSeat> onlineSeats = new(MaxPlayers);
+        private static readonly List<LocalSeat> localSeats = new(maxPlayers);
+        private static readonly List<OnlineSeat> onlineSeats = new(maxPlayers);
 
         public static void StartSinglePlayer()
         {
@@ -66,14 +66,14 @@ namespace KitchenChaos.Sessions
         public static void StartLocalCoop(IEnumerable<LocalSeat> seats)
         {
             Clear();
-            localSeats.AddRange(seats.Take(MaxPlayers));
+            localSeats.AddRange(seats.Take(maxPlayers));
             Mode = GameMode.LocalCoop;
         }
 
         public static void StartOnline(IEnumerable<OnlineSeat> seats, int localSeat)
         {
             Clear();
-            onlineSeats.AddRange(seats.Take(MaxPlayers));
+            onlineSeats.AddRange(seats.Take(maxPlayers));
             LocalOnlineSeat = localSeat;
             Mode = GameMode.Online;
         }

@@ -48,10 +48,10 @@ namespace KitchenChaos.UI
             if (session == null) return;
 
             if (notice != null && Time.unscaledTime < noticeEndTime)
-                GUI.Label(new Rect(0F, 40F, Width, 60F), notice, TitleStyle);
+                GUI.Label(new Rect(0F, 40F, referenceWidth, 60F), notice, TitleStyle);
 
             if (session.IsWaitingForPlayers())
-                GUI.Label(new Rect(0F, Height - 140F, Width, 60F), "Waiting for every player to load the kitchen...", TitleStyle);
+                GUI.Label(new Rect(0F, referenceHeight - 140F, referenceWidth, 60F), "Waiting for every player to load the kitchen...", TitleStyle);
 
             if (!isVisible) return;
 
