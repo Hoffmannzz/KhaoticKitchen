@@ -17,6 +17,11 @@ namespace KitchenChaos.Matches
 
         public TimeDown(uint time) => this.Time = time;
 
+        // Used by online clients to follow the host timers.
+        internal void NotifyStarted() => OnStarted?.Invoke();
+        internal void NotifyUpdated(uint time) => OnUpdated?.Invoke(time);
+        internal void NotifyFinished() => OnFinished?.Invoke();
+
         internal IEnumerator CountDownRoutine()
         {
             var current = Time;

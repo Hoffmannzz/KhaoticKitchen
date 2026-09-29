@@ -14,6 +14,8 @@ namespace KitchenChaos.Matches
         public TimeLimit(uint time, uint finalSeconds) :
             base(time) => this.finalSeconds = finalSeconds;
 
+        internal void NotifyFinalSecondsStarted() => OnFinalSecondsStarted?.Invoke();
+
         internal IEnumerator FinalSecondsRoutine()
         {
             var timeToFinalSeconds = Time - finalSeconds;

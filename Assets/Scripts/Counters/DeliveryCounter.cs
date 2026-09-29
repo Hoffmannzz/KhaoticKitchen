@@ -3,6 +3,7 @@ using KitchenChaos.UI;
 using KitchenChaos.Items;
 using KitchenChaos.Score;
 using KitchenChaos.Orders;
+using KitchenChaos.Networking;
 using ActionCode.VisualEffects;
 
 namespace KitchenChaos.Counters
@@ -44,6 +45,10 @@ namespace KitchenChaos.Counters
             fromHolder.ReleaseItem();
             var ingredients = plate.Ingredients.ToArray();
             var wasDelivered = OrderManager.Instance.Settings.TryDelivery(ingredients, out int tip);
+
+            // Online clients use the host result, as order timers can differ slightly between machines.
+            wasDelivered = NetworkGame.Sync(wasDelivered);
+            tip = NetworkGame.Sync(tip);
 
             Destroy(plate.gameObject);
 

@@ -26,6 +26,8 @@ namespace KitchenChaos.Players
 
         public int Index { get; internal set; }
 
+        internal void SetType(PlayerType type) => Type = type;
+
         public void SetActive(bool active)
         {
             interactableCircle.SetActive(active);

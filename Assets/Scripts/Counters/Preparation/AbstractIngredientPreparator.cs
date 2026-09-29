@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using KitchenChaos.Items;
 using KitchenChaos.Matches;
+using KitchenChaos.Networking;
 using UnityEngine;
 
 namespace KitchenChaos.Counters
@@ -52,6 +53,7 @@ namespace KitchenChaos.Counters
         private bool isPaused;
         private float preparationBooster;
         private float preparationTimeScale;
+        private Coroutine preparationRoutine;
 
         protected virtual void Reset()
         {
@@ -121,7 +123,7 @@ namespace KitchenChaos.Counters
             OnPreparationStarted?.Invoke();
 
             ContinuePreparation();
-            StartCoroutine(PreparationRoutine(ingredient));
+            preparationRoutine = StartCoroutine(PreparationRoutine(ingredient));
         }
 
         private void PausePreparation()
@@ -155,8 +157,32 @@ namespace KitchenChaos.Counters
             } while (currentTime < preparingTime);
 
             OnPreparationUpdated?.Invoke(1F);
+            preparationRoutine = null;
 
-            PrepareIngredient(ingredient.Name);
+            // Online clients wait for the host to say the ingredient is ready.
+            if (NetworkGame.IsClient) yield break;
+
+            var ingredientName = ingredient.Name;
+            NetworkGame.Replicate(NetEventType.PreparationCompleted, this, () => FinishPreparation(ingredientName));
+        }
+
+        /// <summary>
+        /// Completes the preparation when the host says so (online clients only).
+        /// </summary>
+        internal void CompletePreparationFromNetwork()
+        {
+            if (preparationRoutine != null) StopCoroutine(preparationRoutine);
+            preparationRoutine = null;
+
+            if (!holder.IsItem(out Ingredient ingredient)) return;
+
+            OnPreparationUpdated?.Invoke(1F);
+            FinishPreparation(ingredient.Name);
+        }
+
+        private void FinishPreparation(IngredientName name)
+        {
+            PrepareIngredient(name);
             CompletePreparation();
         }
 

@@ -47,6 +47,11 @@ namespace KitchenChaos.Players
 
         public bool IsMoving() => Mathf.Abs(Speed.sqrMagnitude) > 0F;
 
+        /// <summary>
+        /// Animates a chef moved by the network, when this component is disabled.
+        /// </summary>
+        internal void SetWalkingAnimation(bool isWalking) => animator.SetIsWalking(isWalking);
+
         private void UpdateMovement()
         {
             UpdateMovingDirection();

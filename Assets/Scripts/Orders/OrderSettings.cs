@@ -3,6 +3,7 @@ using UnityEngine;
 using KitchenChaos.Items;
 using KitchenChaos.Recipes;
 using System.Collections;
+using KitchenChaos.Networking;
 using System.Collections.Generic;
 
 namespace KitchenChaos.Orders
@@ -28,15 +29,19 @@ namespace KitchenChaos.Orders
 
         public int TotalOrders => orders.Count;
 
+        internal IReadOnlyList<Order> Orders => orders;
+
         private List<Order> orders;
         private Coroutine ordering;
         private OrderManager manager;
+        private int nextOrderId;
 
         internal void Initialize(OrderManager manager)
         {
             if (orders != null) CancelAll();
 
             orders = new(maxOrders);
+            nextOrderId = 0;
             this.manager = manager;
         }
 
@@ -58,7 +63,12 @@ namespace KitchenChaos.Orders
         }
 
 
-        internal void StartOrdering() => ordering = manager.StartCoroutine(OrderingRoutine());
+        internal void StartOrdering()
+        {
+            // Online clients receive the orders created by the host.
+            if (NetworkGame.IsClient) return;
+            ordering = manager.StartCoroutine(OrderingRoutine());
+        }
 
         internal void StopOrdering()
         {
@@ -66,13 +76,35 @@ namespace KitchenChaos.Orders
             CancelAll();
         }
 
-        internal Order Create(RecipeData recipe)
+        internal Order Create(RecipeData recipe) => Create(recipe, nextOrderId);
+
+        internal Order FindOrder(int id) => orders.Find(order => order.Id == id);
+
+        /// <summary>
+        /// Creates the same order the host created (online clients only).
+        /// </summary>
+        internal void CreateFromNetwork(int id, int recipeIndex)
+        {
+            var recipe = recipeSettings.GetRecipe(recipeIndex);
+            if (recipe != null) Create(recipe, id);
+        }
+
+        internal void RemoveFromNetwork(int id)
+        {
+            var order = FindOrder(id);
+            if (order != null) Remove(order);
+        }
+
+        internal void ReturnPlateFromNetwork() => OnPlateReturned?.Invoke();
+
+        private Order Create(RecipeData recipe, int id)
         {
             var waitingTime = recipe.GetWaitingTime(
                 ingredientSettings,
                 additionalTimePerIngredient
             );
-            var order = new Order(recipe, waitingTime);
+            var order = new Order(recipe, waitingTime, id);
+            nextOrderId = Mathf.Max(nextOrderId, id + 1);
 
             Create(order);
 
@@ -90,7 +122,17 @@ namespace KitchenChaos.Orders
             OnOrderCreated?.Invoke(order);
         }
 
-        private void CreateRandom() => Create(recipeSettings.GetRandom());
+        private void CreateRandom()
+        {
+            var recipe = recipeSettings.GetRandom();
+            Order order = null;
+
+            NetworkGame.Replicate(NetEventType.OrderCreated, null, () => order = Create(recipe), writer =>
+            {
+                writer.Write(order.Id);
+                writer.Write(recipeSettings.IndexOf(recipe));
+            });
+        }
 
         private void Remove(Order order)
         {
@@ -103,8 +145,11 @@ namespace KitchenChaos.Orders
 
         private void Fail(Order order)
         {
-            OnOrderFailed?.Invoke(order);
-            manager.StartCoroutine(RemoveRoutine(order, timeToRemoveAfterFail));
+            NetworkGame.Replicate(NetEventType.OrderFailed, null, () =>
+            {
+                OnOrderFailed?.Invoke(order);
+                manager.StartCoroutine(RemoveRoutine(order, timeToRemoveAfterFail));
+            }, writer => writer.Write(order.Id));
         }
 
         private void Delivery(Order order)
@@ -139,13 +184,21 @@ namespace KitchenChaos.Orders
         private IEnumerator RemoveRoutine(Order order, float time)
         {
             yield return new WaitForSeconds(time);
-            Remove(order);
+
+            // Online clients wait for the host to remove the order.
+            if (NetworkGame.IsClient) yield break;
+
+            NetworkGame.Replicate(NetEventType.OrderRemoved, null, () => Remove(order), writer => writer.Write(order.Id));
         }
 
         private IEnumerator ReturnPlateRoutine()
         {
             yield return new WaitForSeconds(timeToReturnPlate);
-            OnPlateReturned?.Invoke();
+
+            // Online clients wait for the host to return the plate.
+            if (NetworkGame.IsClient) yield break;
+
+            NetworkGame.Replicate(NetEventType.PlateReturned, null, () => OnPlateReturned?.Invoke());
         }
     }
 }
