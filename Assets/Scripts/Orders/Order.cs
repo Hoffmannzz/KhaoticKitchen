@@ -4,6 +4,7 @@ using KitchenChaos.Recipes;
 using System;
 using System.Threading;
 using System.Collections;
+using KitchenChaos.Networking;
 using ActionCode.AwaitableCoroutines;
 
 namespace KitchenChaos.Orders
@@ -15,6 +16,11 @@ namespace KitchenChaos.Orders
         public event Action<float> OnWaitingTimeUpdated;
 
         public string Name => recipe.Name;
+
+        /// <summary>
+        /// Identifies this order on every machine of an online match.
+        /// </summary>
+        public int Id { get; }
 
         public PlatedIngredient[] PlatedIngredients => recipe.PlatedIngredients;
 
@@ -33,8 +39,9 @@ namespace KitchenChaos.Orders
         private readonly RecipeData recipe;
         private readonly CancellationTokenSource countDownWaitingTime;
 
-        public Order(RecipeData recipe, float waitingTime)
+        public Order(RecipeData recipe, float waitingTime, int id = 0)
         {
+            Id = id;
             this.recipe = recipe;
             this.waitingTime = waitingTime;
 
@@ -79,6 +86,20 @@ namespace KitchenChaos.Orders
                 WaitingTime -= Time.deltaTime;
             }
 
+            WaitingTime = 0F;
+
+            // Online clients wait for the host to fail the order.
+            if (NetworkGame.IsClient) yield break;
+
+            OnFailed?.Invoke();
+        }
+
+        /// <summary>
+        /// Fails this order when the host says so (online clients only).
+        /// </summary>
+        internal void FailFromNetwork()
+        {
+            CancelCountDownWaitingTime();
             WaitingTime = 0F;
             OnFailed?.Invoke();
         }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using KitchenChaos.Networking;
 
 namespace KitchenChaos.Matches
 {
@@ -16,13 +17,18 @@ namespace KitchenChaos.Matches
 
         internal void StartTimeLimit()
         {
-            if (!IsAllowToStartTimeLimit) return;
+            // Online clients follow the host timers.
+            if (!IsAllowToStartTimeLimit || NetworkGame.IsClient) return;
 
             manager.StartCoroutine(TimeLimit.CountDownRoutine());
             manager.StartCoroutine(TimeLimit.FinalSecondsRoutine());
         }
 
-        internal void StartCountDown() => manager.StartCoroutine(CountDown.CountDownRoutine());
+        internal void StartCountDown()
+        {
+            if (NetworkGame.IsClient) return;
+            manager.StartCoroutine(CountDown.CountDownRoutine());
+        }
 
         public void Dispose() => manager.StopAllCoroutines();
     }

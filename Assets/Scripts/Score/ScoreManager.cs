@@ -8,6 +8,8 @@ namespace KitchenChaos.Score
     {
         [SerializeField] private ScoreSettings settings;
 
+        internal ScoreSettings Settings => settings;
+
         private void Awake() => settings.Initialize();
     }
 }

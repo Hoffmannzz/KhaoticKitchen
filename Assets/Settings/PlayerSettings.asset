@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: PlayerSettings
   m_EditorClassIdentifier: 
   first: 1
+  extraPlayers:
+  - {fileID: 1257872811515003887, guid: 3020120cdc60a8f41b1fa883215f1fae, type: 3}
+  - {fileID: 1257872811515003887, guid: 842cda04d4218b14e84c6a87f172a642, type: 3}

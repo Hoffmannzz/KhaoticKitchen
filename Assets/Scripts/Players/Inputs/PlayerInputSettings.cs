@@ -6,7 +6,7 @@ using static KitchenChaos.Players.PlayerInputActions;
 namespace KitchenChaos.Players
 {
     [CreateAssetMenu(fileName = "PlayerInputSettings", menuName = EditorPaths.SO + "PlayerInputSettings", order = 110)]
-    public sealed class PlayerInputSettings : ScriptableObject
+    public sealed class PlayerInputSettings : ScriptableObject, IPlayerInputSource
     {
         public event Action OnChop;
         public event Action OnSwitch;

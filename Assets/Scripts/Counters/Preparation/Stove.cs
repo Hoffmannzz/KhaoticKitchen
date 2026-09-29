@@ -1,6 +1,7 @@
 using UnityEngine;
 using KitchenChaos.Items;
 using System.Collections;
+using KitchenChaos.Networking;
 
 namespace KitchenChaos.Counters
 {
@@ -93,6 +94,27 @@ namespace KitchenChaos.Counters
             SetBuningAnimationSpeed(2f);
             yield return ToggleWarningRotine(0.2F, 0.2F, 5);
 
+            burningRoutine = null;
+
+            // Online clients wait for the host to burn the ingredient.
+            if (NetworkGame.IsClient) yield break;
+
+            NetworkGame.Replicate(NetEventType.StoveBurned, this, Burn);
+        }
+
+        /// <summary>
+        /// Burns the ingredient when the host says so (online clients only).
+        /// </summary>
+        internal void BurnFromNetwork()
+        {
+            if (burningRoutine != null) StopCoroutine(burningRoutine);
+            burningRoutine = null;
+
+            Burn();
+        }
+
+        private void Burn()
+        {
             BurnIngredient();
             CompleteBurning();
             fryingPan.StartBurn();
@@ -119,6 +141,8 @@ namespace KitchenChaos.Counters
         private void BurnIngredient()
         {
             var ingredient = holder.CurrentItem as Ingredient;
+            if (ingredient == null) return;
+
             var burnedIngredient = ingredientSettings.SpawnIngredient(ingredient.Name, IngredientStatus.Burned);
 
             holder.ReplaceItem(burnedIngredient);
@@ -126,7 +150,8 @@ namespace KitchenChaos.Counters
 
         private void StopBurning()
         {
-            StopCoroutine(burningRoutine);
+            if (burningRoutine != null) StopCoroutine(burningRoutine);
+            burningRoutine = null;
             CompleteBurning();
         }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using ActionCode.Audio;
 using KitchenChaos.Items;
 using System.Collections;
+using KitchenChaos.Networking;
 using ActionCode.VisualEffects;
 
 namespace KitchenChaos.Counters
@@ -55,7 +56,15 @@ namespace KitchenChaos.Counters
             yield return new WaitWhile(() => animation.isPlaying);
             animation.Stop();
 
-            holder.DestroyItem();
+            // Online clients wait for the host to destroy the item.
+            if (NetworkGame.IsClient) yield break;
+
+            NetworkGame.Replicate(NetEventType.TrashDestroyed, this, holder.DestroyItem);
         }
+
+        /// <summary>
+        /// Destroys the disposed item when the host says so (online clients only).
+        /// </summary>
+        internal void DestroyItemFromNetwork() => holder.DestroyItem();
     }
 }

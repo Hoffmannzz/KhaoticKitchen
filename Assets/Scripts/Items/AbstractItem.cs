@@ -1,5 +1,6 @@
 using UnityEngine;
 using KitchenChaos.Physics;
+using KitchenChaos.Networking;
 using ActionCode.VisualEffects;
 
 namespace KitchenChaos.Items
@@ -25,6 +26,9 @@ namespace KitchenChaos.Items
             collectibleBody = GetComponent<CollectableBody>();
             highlighterContainer = GetComponent<HighlighterContainer>();
         }
+
+        protected virtual void Awake() => NetworkEntityRegistry.RegisterSpawned(gameObject);
+        protected virtual void OnDestroy() => NetworkEntityRegistry.Unregister(gameObject);
 
         public ICollectable GetCollectible() => collectibleBody;
         public IHighlightable GetHighlightable() => highlighterContainer;

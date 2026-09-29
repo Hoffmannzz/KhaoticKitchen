@@ -49,6 +49,17 @@ namespace KitchenChaos.Score
             OnScoreDecreased?.Invoke(deltaScore);
         }
 
+        /// <summary>
+        /// Copies the host score (online clients only).
+        /// </summary>
+        internal void SetFromNetwork(int tips, int successfulDeliveries, int failedDeliveries, float score)
+        {
+            Tips = tips;
+            SuccessfulDeliveries = successfulDeliveries;
+            FailedDeliveries = failedDeliveries;
+            Score = score;
+        }
+
         public float GetTotalFailedDeliveries() => FailedDeliveries * failedOrdersMultiplier;
 
         public float GetTotalSuccessfulDeliveries() => SuccessfulDeliveries * deliveredOrdersMultiplier;

@@ -18,6 +18,10 @@ namespace KitchenChaos.Recipes
 
         public RecipeData GetRandom() => RandomUtils.WeightedRandom<RecipeData>(recipes);
 
+        internal int IndexOf(RecipeData recipe) => System.Array.IndexOf(recipes, recipe);
+
+        internal RecipeData GetRecipe(int index) => index >= 0 && index < recipes.Length ? recipes[index] : null;
+
         internal bool CanPlate(IngredientData ingredientData)
         {
             foreach (var recipe in recipes)
