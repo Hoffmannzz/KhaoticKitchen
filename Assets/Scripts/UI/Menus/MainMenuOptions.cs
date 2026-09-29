@@ -40,7 +40,8 @@ namespace KitchenChaos.UI
             creditsButton.onClick.AddListener(RequestOpenCredits);
 
             // Coming back from an online match: go straight back to the lobby.
-            if (OnlineSession.ShouldShowMenu && isActiveAndEnabled) StartCoroutine(OpenOnlineAfterMenuShows());
+            // Coroutines only need an active GameObject. isActiveAndEnabled is still false during Awake.
+            if (OnlineSession.ShouldShowMenu && gameObject.activeInHierarchy) StartCoroutine(OpenOnlineAfterMenuShows());
         }
 
         protected override void UnBindButtonsEvents()

@@ -298,6 +298,10 @@ namespace KitchenChaos.Networking
             readyClients.Clear();
             State = SessionState.InMatch;
 
+            // A client can still be on the last match's results screen. Forgets that match,
+            // so unloading its level doesn't send this session back to the lobby.
+            match = null;
+
             if (sceneSettings) sceneSettings.GoToGame();
             else Debug.LogError("[Network] Missing SceneSettings. Open the online menu from the main menu.");
         }

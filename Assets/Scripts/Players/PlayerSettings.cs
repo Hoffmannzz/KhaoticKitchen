@@ -30,7 +30,11 @@ namespace KitchenChaos.Players
         /// Switches into the next Player.
         /// <para>It checks if switch is possible.</para>
         /// </summary>
-        public void Switch() => Switch(GetNextPlayerType());
+        public void Switch()
+        {
+            // Multiplayer matches have no current chef to switch from.
+            if (canSwitch) Switch(GetNextPlayerType());
+        }
 
         /// <summary>
         /// Switches into the given player if available.
