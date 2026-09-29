@@ -48,7 +48,7 @@ namespace KitchenChaos.UI
 
             playerName = OnlineSession.PlayerName;
             address = PlayerPrefs.GetString(addressKey, "127.0.0.1");
-            port = OnlineSession.DefaultPort.ToString();
+            port = OnlineSession.defaultPort.ToString();
         }
 
         private void Update()
@@ -154,7 +154,7 @@ namespace KitchenChaos.UI
 
             GUILayout.Space(10F);
             var members = session.Members;
-            for (int i = 0; i < GameSession.MaxPlayers; i++)
+            for (int i = 0; i < GameSession.maxPlayers; i++)
             {
                 if (i < members.Count)
                 {
@@ -238,7 +238,7 @@ namespace KitchenChaos.UI
             _ = session.JoinAsync(useRelay, joinCode, address, ParsePort());
         }
 
-        private ushort ParsePort() => ushort.TryParse(port, out ushort value) && value > 0 ? value : OnlineSession.DefaultPort;
+        private ushort ParsePort() => ushort.TryParse(port, out ushort value) && value > 0 ? value : OnlineSession.defaultPort;
 
         private void Back()
         {

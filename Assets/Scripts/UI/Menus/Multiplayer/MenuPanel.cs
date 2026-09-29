@@ -8,8 +8,8 @@ namespace KitchenChaos.UI
     /// </summary>
     public abstract class MenuPanel : MonoBehaviour
     {
-        protected const float Width = 1920F;
-        protected const float Height = 1080F;
+        protected const float referenceWidth = 1920F;
+        protected const float referenceHeight = 1080F;
 
         protected GUIStyle PanelStyle { get; private set; }
         protected GUIStyle TitleStyle { get; private set; }
@@ -24,22 +24,22 @@ namespace KitchenChaos.UI
         private static Texture2D buttonHoverTexture;
         private static Texture2D fieldTexture;
 
-        protected static readonly Color Accent = new Color(1F, 0.64F, 0.16F);
-        protected static readonly Color[] ChefColors =
+        protected static readonly Color accent = new Color(1F, 0.64F, 0.16F);
+        protected static readonly Color[] chefColors =
         {
             new Color(0F, 0.73F, 0.93F),
             new Color(0.3F, 0.85F, 0.3F),
             new Color(0.89F, 0.18F, 0F),
             new Color(0.97F, 0.71F, 0F)
         };
-        protected static readonly string[] ChefNames = { "Blue", "Green", "Red", "Yellow" };
+        protected static readonly string[] chefNames = { "Blue", "Green", "Red", "Yellow" };
 
         private void OnGUI()
         {
             CreateStyles();
 
-            var scale = Mathf.Min(Screen.width / Width, Screen.height / Height);
-            var offset = new Vector2((Screen.width - Width * scale) * 0.5F, (Screen.height - Height * scale) * 0.5F);
+            var scale = Mathf.Min(Screen.width / referenceWidth, Screen.height / referenceHeight);
+            var offset = new Vector2((Screen.width - referenceWidth * scale) * 0.5F, (Screen.height - referenceHeight * scale) * 0.5F);
             GUI.matrix = Matrix4x4.TRS(offset, Quaternion.identity, new Vector3(scale, scale, 1F));
             GUI.depth = -100;
 
@@ -52,7 +52,7 @@ namespace KitchenChaos.UI
 
         protected Rect BeginWindow(float width, float height, string title)
         {
-            var rect = new Rect((Width - width) * 0.5F, (Height - height) * 0.5F - 60F, width, height);
+            var rect = new Rect((referenceWidth - width) * 0.5F, (referenceHeight - height) * 0.5F - 60F, width, height);
             GUI.Box(rect, GUIContent.none, PanelStyle);
             GUILayout.BeginArea(new Rect(rect.x + 40F, rect.y + 30F, rect.width - 80F, rect.height - 60F));
             GUILayout.Label(title, TitleStyle);
@@ -85,8 +85,8 @@ namespace KitchenChaos.UI
             GUI.contentColor = previous;
         }
 
-        protected static Color GetChefColor(int index) => ChefColors[Mathf.Clamp(index, 0, ChefColors.Length - 1)];
-        protected static string GetChefName(int index) => ChefNames[Mathf.Clamp(index, 0, ChefNames.Length - 1)];
+        protected static Color GetChefColor(int index) => chefColors[Mathf.Clamp(index, 0, chefColors.Length - 1)];
+        protected static string GetChefName(int index) => chefNames[Mathf.Clamp(index, 0, chefNames.Length - 1)];
 
         private void CreateStyles()
         {
@@ -104,7 +104,7 @@ namespace KitchenChaos.UI
                 fontSize = 46,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
-                normal = { textColor = Accent }
+                normal = { textColor = accent }
             };
 
             LabelStyle = new GUIStyle(GUI.skin.label)

@@ -19,7 +19,7 @@ namespace KitchenChaos.UI
         private Action onClosed;
 
         private bool isClosing;
-        private readonly List<LocalSeat> seats = new(GameSession.MaxPlayers);
+        private readonly List<LocalSeat> seats = new(GameSession.maxPlayers);
 
         public static LocalCoopLobby Open(SceneSettings sceneSettings, Action onClosed)
         {
@@ -72,7 +72,7 @@ namespace KitchenChaos.UI
             GUILayout.Label("Up to 4 players on this computer. Each player controls their own chef.", SmallLabelStyle);
             GUILayout.Space(16F);
 
-            for (int i = 0; i < GameSession.MaxPlayers; i++)
+            for (int i = 0; i < GameSession.maxPlayers; i++)
             {
                 var text = i < seats.Count ?
                     $"P{i + 1}  {GetChefName(i)} chef  -  {seats[i].GetDeviceName()}" :
@@ -100,7 +100,7 @@ namespace KitchenChaos.UI
 
         private void Join(SeatDevice device, Gamepad gamepad)
         {
-            if (seats.Count >= GameSession.MaxPlayers || IsJoined(device, gamepad)) return;
+            if (seats.Count >= GameSession.maxPlayers || IsJoined(device, gamepad)) return;
             seats.Add(new LocalSeat(device, gamepad));
         }
 

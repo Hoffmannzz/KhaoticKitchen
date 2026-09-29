@@ -45,13 +45,13 @@ namespace KitchenChaos.Items
         /// </summary>
         internal InteractionTarget CaptureTarget() => new InteractionTarget
         {
-            HasHit = detector.HasHit,
-            Collector = detector.TryGetEnabledComponent(out IItemCollector collector) ? NetworkEntityRegistry.GetId(collector) : NetworkEntityRegistry.None,
-            Collectable = detector.TryGetEnabledComponent(out IItemCollectable collectable) ? NetworkEntityRegistry.GetId(collectable) : NetworkEntityRegistry.None,
-            Transfer = detector.TryGetEnabledComponent(out IItemTransfer transfer) ? NetworkEntityRegistry.GetId(transfer) : NetworkEntityRegistry.None,
-            Holder = detector.TryGetEnabledComponent(out IItemHolder itemHolder) ? NetworkEntityRegistry.GetId(itemHolder) : NetworkEntityRegistry.None,
-            Disposer = detector.TryGetEnabledComponent(out IItemDisposer disposer) ? NetworkEntityRegistry.GetId(disposer) : NetworkEntityRegistry.None,
-            Interactable = detector.TryGetEnabledComponent(out IInteractable interactable) ? NetworkEntityRegistry.GetId(interactable) : NetworkEntityRegistry.None
+            hasHit = detector.HasHit,
+            collector = detector.TryGetEnabledComponent(out IItemCollector collector) ? NetworkEntityRegistry.GetId(collector) : NetworkEntityRegistry.none,
+            collectable = detector.TryGetEnabledComponent(out IItemCollectable collectable) ? NetworkEntityRegistry.GetId(collectable) : NetworkEntityRegistry.none,
+            transfer = detector.TryGetEnabledComponent(out IItemTransfer transfer) ? NetworkEntityRegistry.GetId(transfer) : NetworkEntityRegistry.none,
+            holder = detector.TryGetEnabledComponent(out IItemHolder itemHolder) ? NetworkEntityRegistry.GetId(itemHolder) : NetworkEntityRegistry.none,
+            disposer = detector.TryGetEnabledComponent(out IItemDisposer disposer) ? NetworkEntityRegistry.GetId(disposer) : NetworkEntityRegistry.none,
+            interactable = detector.TryGetEnabledComponent(out IInteractable interactable) ? NetworkEntityRegistry.GetId(interactable) : NetworkEntityRegistry.none
         };
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace KitchenChaos.Items
             return TryGetTarget(out item);
         }
 
-        private bool HasHit() => target?.HasHit ?? detector.HasHit;
+        private bool HasHit() => target?.hasHit ?? detector.HasHit;
 
         private bool TryGetTarget(out IItemCollector component) =>
             target.HasValue ? target.Value.TryGetCollector(out component) : detector.TryGetEnabledComponent(out component);

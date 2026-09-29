@@ -161,7 +161,7 @@ namespace KitchenChaos.Networking
                 NetworkTransport = unityTransport,
                 ConnectionApproval = true,
                 EnableSceneManagement = false,
-                ProtocolVersion = OnlineSession.ProtocolVersion
+                ProtocolVersion = OnlineSession.protocolVersion
             };
 
             manager.ConnectionApprovalCallback = HandleConnectionApproval;

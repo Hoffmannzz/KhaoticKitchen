@@ -53,7 +53,7 @@ namespace KitchenChaos.Networking
         private bool isRecording;
         private bool isReplaying;
 
-        private readonly List<NetworkChef> chefs = new(GameSession.MaxPlayers);
+        private readonly List<NetworkChef> chefs = new(GameSession.maxPlayers);
         private readonly List<int> recordedIds = new(8);
         private readonly List<int> recordedValues = new(4);
         private readonly Queue<int> replayedValues = new(4);

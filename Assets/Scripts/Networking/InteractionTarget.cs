@@ -20,41 +20,41 @@ namespace KitchenChaos.Networking
     /// </summary>
     public struct InteractionTarget
     {
-        public bool HasHit;
-        public int Collector;
-        public int Collectable;
-        public int Transfer;
-        public int Holder;
-        public int Disposer;
-        public int Interactable;
+        public bool hasHit;
+        public int collector;
+        public int collectable;
+        public int transfer;
+        public int holder;
+        public int disposer;
+        public int interactable;
 
-        public bool TryGetCollector(out IItemCollector component) => TryGet(Collector, out component);
-        public bool TryGetCollectable(out IItemCollectable component) => TryGet(Collectable, out component);
-        public bool TryGetTransfer(out IItemTransfer component) => TryGet(Transfer, out component);
-        public bool TryGetHolder(out IItemHolder component) => TryGet(Holder, out component);
-        public bool TryGetDisposer(out IItemDisposer component) => TryGet(Disposer, out component);
-        public bool TryGetInteractable(out IInteractable component) => TryGet(Interactable, out component);
+        public bool TryGetCollector(out IItemCollector component) => TryGet(collector, out component);
+        public bool TryGetCollectable(out IItemCollectable component) => TryGet(collectable, out component);
+        public bool TryGetTransfer(out IItemTransfer component) => TryGet(transfer, out component);
+        public bool TryGetHolder(out IItemHolder component) => TryGet(holder, out component);
+        public bool TryGetDisposer(out IItemDisposer component) => TryGet(disposer, out component);
+        public bool TryGetInteractable(out IInteractable component) => TryGet(interactable, out component);
 
         internal void Write(NetWriter writer)
         {
-            writer.Write(HasHit);
-            writer.Write(Collector);
-            writer.Write(Collectable);
-            writer.Write(Transfer);
-            writer.Write(Holder);
-            writer.Write(Disposer);
-            writer.Write(Interactable);
+            writer.Write(hasHit);
+            writer.Write(collector);
+            writer.Write(collectable);
+            writer.Write(transfer);
+            writer.Write(holder);
+            writer.Write(disposer);
+            writer.Write(interactable);
         }
 
         internal static InteractionTarget Read(NetReader reader) => new InteractionTarget
         {
-            HasHit = reader.ReadBool(),
-            Collector = reader.ReadInt(),
-            Collectable = reader.ReadInt(),
-            Transfer = reader.ReadInt(),
-            Holder = reader.ReadInt(),
-            Disposer = reader.ReadInt(),
-            Interactable = reader.ReadInt()
+            hasHit = reader.ReadBool(),
+            collector = reader.ReadInt(),
+            collectable = reader.ReadInt(),
+            transfer = reader.ReadInt(),
+            holder = reader.ReadInt(),
+            disposer = reader.ReadInt(),
+            interactable = reader.ReadInt()
         };
 
         private static bool TryGet<T>(int id, out T component) where T : class, IEnable
